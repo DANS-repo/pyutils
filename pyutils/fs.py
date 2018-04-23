@@ -3,7 +3,9 @@
 
 import os
 import collections
+import hashlib
 import pandas as pd
+from functools import partial
 
 
 def list_extensions(folder='.', ext_filter=lambda ext: True, path_filter=lambda path: True):
@@ -63,3 +65,16 @@ def find_files(folder='.', ext_filter=lambda ext: True, path_filter=lambda path:
                     found_files.append(os.path.join(path, filename))
 
     return found_files
+
+
+def sha1_for_file(filename, block_size=2**14):
+    """Compute SHA1 digest for a file
+
+    Optional block_size parameter controls memory used to do MD5 calculation.
+    This should be a multiple of 128 bytes.
+    """
+    with open(filename, mode='rb') as f:
+        d = hashlib.sha1()
+        for buf in iter(partial(f.read, block_size), b''):
+            d.update(buf)
+    return d.hexdigest()
