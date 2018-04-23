@@ -25,7 +25,7 @@ def list_extensions(folder='.', ext_filter=lambda ext: True, path_filter=lambda 
     for path, dirs, files in os.walk(folder):
         for filename in files:
             ext = os.path.splitext(filename)[1].lower()
-            if ext_filter(ext) and path_filter(path):
+            if ext_filter(ext) and path_filter(path) and not filename.startswith('.'):
                 if not ext in extensions:
                     extensions[ext] = [0, 0]
                 extensions[ext][0] += 1
