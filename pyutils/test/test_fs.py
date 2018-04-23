@@ -18,3 +18,6 @@ class TestFs(unittest.TestCase):
         pathfilter = lambda path: os.path.abspath(path) == os.path.abspath(folder)
         df = fs.list_extensions(folder, path_filter=pathfilter)
         print('no recursion\n', df)
+
+    def test_find_files(self):
+        print(fs.find_files('../../', ext_filter=lambda ext: ext == '.py'))
