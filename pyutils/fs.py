@@ -12,7 +12,6 @@ def list_extensions(folder=".", ext_filter=lambda ext: True, path_filter=lambda 
     """
     if not os.path.exists(folder):
         raise FileNotFoundError("Not found: " + folder)
-
     pd.options.display.float_format = '{:,.2f}'.format
     extensions = collections.defaultdict(list)
 
