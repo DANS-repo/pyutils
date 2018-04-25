@@ -86,8 +86,8 @@ def display(filename, lines=10, line_number=False):
         for line in f:
             count += 1
             if line_number:
-                print(count, line.strip())
+                print(count, line, end='')
             else:
-                print(line.strip())
+                print(line, end='')
             if count >= lines:
                 break
