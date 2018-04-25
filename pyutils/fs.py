@@ -78,3 +78,16 @@ def sha1_for_file(filename, block_size=2**14):
         for buf in iter(partial(f.read, block_size), b''):
             d.update(buf)
     return d.hexdigest()
+
+
+def display(filename, lines=10, line_number=False):
+    count = 0
+    with open(filename, 'r') as f:
+        for line in f:
+            count += 1
+            if line_number:
+                print(count, line)
+            else:
+                print(line)
+            if count >= lines:
+                break
