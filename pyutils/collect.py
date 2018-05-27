@@ -11,6 +11,7 @@ class ListCollector(object):
         self.__max = -1
 
     def add(self, name, list_):
+        print(name)
         if isinstance(list_, list):
             self.__coll[name] = list_
         else:
