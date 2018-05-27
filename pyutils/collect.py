@@ -42,9 +42,13 @@ class ListCollector(object):
             return self.__coll[key][self.__row]
 
     def next_row(self):
+        print('\n')
+
         row = []
         if self.__repeater:
             row.append(self.__repeater)
         for key in self.__coll.keys():
+            print(key)
+
             row.append(self.next(key))
         return row
