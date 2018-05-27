@@ -44,8 +44,8 @@ class ListCollector(object):
     def next_row(self):
         print(self.__row)
         row = []
-        if self.__repeater:
-            row.append(self.__repeater)
+        # if self.__repeater:
+        #     row.append(self.__repeater)
         for key in self.__coll.keys():
             row.append(self.next(key))
         return row
