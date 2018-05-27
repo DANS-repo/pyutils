@@ -68,7 +68,8 @@ def find_files(folder='.', ext_filter=lambda ext: True, path_filter=lambda path:
 
 
 def sha1_for_file(filename, block_size=2**14):
-    """Compute SHA1 digest for a file
+    """
+    Compute SHA1 digest for a file
 
     Optional block_size parameter controls memory used to do MD5 calculation.
     This should be a multiple of 128 bytes.
@@ -81,6 +82,13 @@ def sha1_for_file(filename, block_size=2**14):
 
 
 def display(filename, lines=10, line_number=False):
+    """
+    Display the contents of a text file.
+
+    :param filename: file to display
+    :param lines: number of lines to display, default is 10
+    :param line_number: should a line number be printed, default is False
+    """
     count = 0
     with open(filename, 'r') as f:
         for line in f:
