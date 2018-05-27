@@ -11,7 +11,10 @@ class ListCollector(object):
         self.__max = -1
 
     def add(self, name, list_):
-        self.__coll[name] = list_
+        if isinstance(list_, list):
+            self.__coll[name] = list_
+        else:
+            raise RuntimeError('Not a list: ' + str(list_))
 
     def max_len(self):
         mk = None
@@ -43,6 +46,5 @@ class ListCollector(object):
         if self.__repeater:
             row.append(self.__repeater)
         for key in self.__coll.keys():
-            print(key)
             row.append(self.next(key))
         return row

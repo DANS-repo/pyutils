@@ -33,3 +33,7 @@ class TestCollect(unittest.TestCase):
         while ls.has_next():
             print(ls.next_row())
 
+    def test_failure(self):
+        lc = ListCollector()
+        with self.assertRaises(RuntimeError):
+            lc.add('foo', lc)
