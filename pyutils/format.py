@@ -54,15 +54,18 @@ def link_fedora_ds_license(sid):
 def link(path, caption=None, caption_color=None):
     """
     Display relative links to the file in 'path'.
-    Hide JupyterLab-link when referer has 'localfile' (call from nbviewer).
+
+    :param path: the path to link
+    :param caption: caption for links, default None
+    :param caption_color: color for caption, default None
+    :return: parameter path for chaining
     """
     _blank = ['.html', '.txt', '.json']
     _ccoll = {'.xlsx': 'green', '.html': 'blue', '.json': 'purple', '.csv': 'DarkSlateGray'}
     _ctext = {'.xlsx': 'Excel-bestand', '.html': 'html-pagina', '.json': 'json-file', '.csv': 'csv-bestand'}
     nbv = '<b>link</b>'
-    abo = '<b>office-space</b>'
-    jup = '<b>jupyterLab</b>'
     dsv = '<b>directory index</b>'
+    abo = '<b>office-space</b>'
 
     ext = os.path.splitext(path)[1]
     filename = os.path.basename(path)
@@ -80,29 +83,20 @@ def link(path, caption=None, caption_color=None):
     rel_path = os.path.join('/ta', os.path.relpath(abs_path, '/office-space/TA'))
     rel_dire = os.path.join('/ta', os.path.relpath(abs_dire, '/office-space/TA'))
 
-    link_nbv = '<a href="{}"{}>{}</a>'.format(rel_path, blank, path)
-    link_jup = '<a href="{}">{}</a>'.format(path, path)
-    link_abs = '{}'.format(abs_path)
-    link_dir = '<a href="{}" target="_blank">{}</a>'.format(rel_dire, rel_dire)
+    link_nbv = '<a href="{}" title="link to the file"{}>{}</a>'.format(rel_path, blank, path)
+    link_jup = '<a href="{}" title="link from JupyterLab">&#8865;</a>'.format(path)
+    link_abs = '<span title="the directory on office-space containing the file">{}</span>'.format(abs_path)
+    link_dir = '<a href="{}" title="link to directory containing the file" target="_blank">{}</a>'.format(rel_dire,
+                                                                                                          rel_dire)
 
-    script = """
-    <script type="text/javascript">
-    var ref = document.referrer;
-    if (ref.includes('localfile')) { // nbviewer path has 'localfile'
-        for (row of document.getElementsByClassName("jupyterLabRow")) {
-          row.style.display = 'none';
-        }
-    }
-    </script>
-    """
     table = """
     <table>
-    <caption style="text-align: left"><h3 style="color: {};">{}</h3></caption>
-    <tr><td style="text-align: left">{}</td><td style="text-align: left">{}</td></tr>
-    <tr class="jupyterLabRow"><td style="text-align: left">{}</td><td style="text-align: left">{}</td></tr>
-    <tr><td style="text-align: left">{}</td><td style="text-align: left">{}</td></tr>
-    <tr><td style="text-align: left">{}</td><td style="text-align: left">{}</td></tr>
+    <caption style="text-align: left"><h3 style="color: {};">{}&nbsp;{}</h3></caption>
+    <tr><td style="text-align: left">{}</td><td style="text-align: left">{}</td><td>  </td></tr>
+    <tr><td style="text-align: left">{}</td><td style="text-align: left">{}</td><td>  </td></tr>
+    <tr><td style="text-align: left">{}</td><td style="text-align: left">{}</td><td>  </td></tr>
     </table>
-    """.format(caption_color, caption, nbv, link_nbv, jup, link_jup, dsv, link_dir, abo, link_abs)
+    """.format(caption_color, link_jup, caption, nbv, link_nbv, dsv, link_dir, abo, link_abs)
 
-    display(HTML(table), HTML(script))
+    display(HTML(table))
+    return path
