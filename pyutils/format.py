@@ -75,10 +75,15 @@ def link(path, caption=None, color=None):
     dsv = '<b>directory index</b>'
     abo = '<b>office-space</b>'
 
-    ext = os.path.splitext(path)[1]
-    filename = os.path.basename(path)
+    abs_path = os.path.abspath(path)
+    ext = os.path.splitext(abs_path)[1]
+    filename = os.path.basename(abs_path)
+
     if caption is None:
-        caption = 'bestand'
+        if os.path.isdir(abs_path):
+            caption = 'directory'
+        else:
+            caption = 'bestand'
         caption = _ctext.get(ext, caption)
         caption += ': ' + filename
     if color is None:
@@ -86,15 +91,22 @@ def link(path, caption=None, color=None):
         color = _ccoll.get(ext, color)
 
     blank = ' target="_blank"' if ext in _blank else ''
-    abs_path = os.path.abspath(path)
-    abs_dire = os.path.dirname(abs_path)
-    rel_path = os.path.join('/ta', os.path.relpath(abs_path, '/office-space/TA'))
+
+    if os.path.isdir(abs_path):
+        abs_dire = abs_path
+        rel_path = os.path.relpath(os.path.dirname(abs_path), '/office-space/TA')
+        nbv_text = os.path.basename(abs_path)
+    else:
+        abs_dire = os.path.dirname(abs_path)
+        rel_path = os.path.join('/ta', os.path.relpath(abs_path, '/office-space/TA'))
+        nbv_text = path
     rel_dire = os.path.join('/ta', os.path.relpath(abs_dire, '/office-space/TA'))
 
     if ext == '.ipynb':
         rel_path = path
 
-    link_nbv = '<a href="{}" title="link to the file"{}>{}</a>'.format(rel_path, blank, path)
+    print(rel_path)
+    link_nbv = '<a href="{}" title="link to the file"{}>{}</a>'.format(rel_path, blank, nbv_text)
     link_jup = '<a href="{}" title="link from JupyterLab">&#8865;</a>'.format(path)
     link_dir = '<a href="{}" title="link to directory containing the file" target="_blank">{}</a>'.format(rel_dire,
                                                                                                           rel_dire)
