@@ -123,7 +123,7 @@ def toggle_code_cells():
     """
     display(HTML("""
     <script>
-        code_show=true; 
+        code_show=false; 
         function code_toggle() {
          if (code_show){
              $("div.input").hide();
