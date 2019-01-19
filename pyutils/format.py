@@ -51,18 +51,26 @@ def link_fedora_ds_license(sid):
         .format(sid, sid)
 
 
-def link(path, caption=None, caption_color=None):
+def link(path, caption=None, color=None):
     """
     Display relative links to the file in 'path'.
 
     :param path: the path to link
     :param caption: caption for links, default None
-    :param caption_color: color for caption, default None
+    :param color: color for caption and border, default None
     :return: parameter path for chaining
     """
-    _blank = ['.html', '.txt', '.json']
-    _ccoll = {'.xlsx': 'green', '.html': 'blue', '.json': 'purple', '.csv': 'DarkSlateGray'}
-    _ctext = {'.xlsx': 'Excel-bestand', '.html': 'html-pagina', '.json': 'json-file', '.csv': 'csv-bestand'}
+    _blank = ['.html', '.txt', '.json', '.csv']
+    _ccoll = {'.xlsx': 'green',
+              '.html': 'blue',
+              '.json': 'purple',
+              '.csv': 'DarkSlateGray',
+              '.ipynb': 'Chocolate'}
+    _ctext = {'.xlsx': 'Excel-bestand',
+              '.html': 'html-pagina',
+              '.json': 'json-file',
+              '.csv': 'csv-bestand',
+              '.ipynb': 'notebook'}
     nbv = '<b>link</b>'
     dsv = '<b>directory index</b>'
     abo = '<b>office-space</b>'
@@ -73,9 +81,9 @@ def link(path, caption=None, caption_color=None):
         caption = 'bestand'
         caption = _ctext.get(ext, caption)
         caption += ': ' + filename
-    if caption_color is None:
-        caption_color = 'grey'
-        caption_color = _ccoll.get(ext, caption_color)
+    if color is None:
+        color = 'grey'
+        color = _ccoll.get(ext, color)
 
     blank = ' target="_blank"' if ext in _blank else ''
     abs_path = os.path.abspath(path)
@@ -83,20 +91,50 @@ def link(path, caption=None, caption_color=None):
     rel_path = os.path.join('/ta', os.path.relpath(abs_path, '/office-space/TA'))
     rel_dire = os.path.join('/ta', os.path.relpath(abs_dire, '/office-space/TA'))
 
+    if ext == '.ipynb':
+        rel_path = path
+
     link_nbv = '<a href="{}" title="link to the file"{}>{}</a>'.format(rel_path, blank, path)
     link_jup = '<a href="{}" title="link from JupyterLab">&#8865;</a>'.format(path)
-    link_abs = '<span title="the directory on office-space containing the file">{}</span>'.format(abs_path)
     link_dir = '<a href="{}" title="link to directory containing the file" target="_blank">{}</a>'.format(rel_dire,
                                                                                                           rel_dire)
+    link_abs = '<span title="the directory on office-space containing the file">{}</span>'.format(abs_path)
 
-    table = """
-    <table>
-    <caption style="text-align: left"><h3 style="color: {};">{}&nbsp;{}</h3></caption>
-    <tr><td style="text-align: left">{}</td><td style="text-align: left">{}</td><td>  </td></tr>
-    <tr><td style="text-align: left">{}</td><td style="text-align: left">{}</td><td>  </td></tr>
-    <tr><td style="text-align: left">{}</td><td style="text-align: left">{}</td><td>  </td></tr>
-    </table>
-    """.format(caption_color, link_jup, caption, nbv, link_nbv, dsv, link_dir, abo, link_abs)
+    capt = '<caption style="text-align: left"><h3 style="color: {};">{}&nbsp;{}</h3></caption>' \
+        .format(color, link_jup, caption)
+    row1 = '<tr><td style="text-align: left">{}</td><td style="text-align: left">{}</td><td>  </td></tr>' \
+        .format(nbv, link_nbv)
+    row2 = '<tr><td style="text-align: left">{}</td><td style="text-align: left">{}</td><td>  </td></tr>' \
+        .format(dsv, link_dir)
+    row3 = '<tr><td style="text-align: left">{}</td><td style="text-align: left">{}</td><td>  </td></tr>' \
+        .format(abo, link_abs)
+
+    table = '<table style="border: 1px solid {};">{}{}{}{}</table>' \
+        .format(color, capt, row1, row2, row3)
 
     display(HTML(table))
     return path
+
+
+def toggle_code_cells():
+    """
+    Displays a button to toggle the visibility of code cells.
+    :return: None
+    """
+    display(HTML("""
+    <script>
+        code_show=true; 
+        function code_toggle() {
+         if (code_show){
+             $("div.input").hide();
+         } else {
+             $("div.input").show();
+         }
+         code_show = !code_show
+        } 
+        $( document ).ready(code_toggle);
+    </script>
+    <form action="javascript:code_toggle()">
+        <input type="submit" value="Toggle code cells">
+    </form>
+    """))
