@@ -104,8 +104,7 @@ def link(path, caption=None, color=None):
 
     if ext == '.ipynb':
         rel_path = path
-
-    print(rel_path)
+    
     link_nbv = '<a href="{}" title="link to the file"{}>{}</a>'.format(rel_path, blank, nbv_text)
     link_jup = '<a href="{}" title="link from JupyterLab">&#8865;</a>'.format(path)
     link_dir = '<a href="{}" title="link to directory containing the file" target="_blank">{}</a>'.format(rel_dire,
