@@ -118,7 +118,7 @@ def link(path, caption=None, color=None):
 
 def toggle_code_cells():
     """
-    Displays a button to toggle the visibility of code cells.
+    Displays a floating button to toggle the visibility of code cells.
     :return: None
     """
     display(HTML("""
@@ -134,7 +134,22 @@ def toggle_code_cells():
         } 
         $( document ).ready(code_toggle);
     </script>
+    <style>
+        div.floating-bar {
+            position:fixed;
+            bottom:20px;
+            left:20px;
+            font-size:90%;
+        }
+        input.toggle-button {
+            color: maron;
+            padding: 5px;
+            outline: none;
+        }
+    </style>
+    <div class="floating-bar">
     <form action="javascript:code_toggle()">
-        <input type="submit" value="Toggle code cells">
+        <input class="toggle-button" type="submit" value="Toggle code cells">
     </form>
+    </div>
     """))
