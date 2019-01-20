@@ -94,7 +94,6 @@ def link(path, caption=None, color=None):
 
     if os.path.isdir(abs_path):
         abs_dire = abs_path
-        rel_path = os.path.relpath(os.path.dirname(abs_path), '/office-space/TA')
         nbv_text = os.path.basename(abs_path)
     else:
         abs_dire = os.path.dirname(abs_path)
@@ -102,9 +101,9 @@ def link(path, caption=None, color=None):
         nbv_text = path
     rel_dire = os.path.join('/ta', os.path.relpath(abs_dire, '/office-space/TA'))
 
-    if ext == '.ipynb':
+    if ext == '.ipynb' or os.path.isdir(abs_path):
         rel_path = path
-    
+
     link_nbv = '<a href="{}" title="link to the file"{}>{}</a>'.format(rel_path, blank, nbv_text)
     link_jup = '<a href="{}" title="link from JupyterLab">&#8865;</a>'.format(path)
     link_dir = '<a href="{}" title="link to directory containing the file" target="_blank">{}</a>'.format(rel_dire,
