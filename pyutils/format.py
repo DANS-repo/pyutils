@@ -77,10 +77,11 @@ def link(path, caption=None, color=None):
 
     abs_path = os.path.abspath(path)
     ext = os.path.splitext(abs_path)[1]
+    isdir = ext == ''
     filename = os.path.basename(abs_path)
 
     if caption is None:
-        if os.path.isdir(abs_path):
+        if isdir:
             caption = 'directory'
         else:
             caption = 'bestand'
@@ -92,8 +93,7 @@ def link(path, caption=None, color=None):
 
     blank = ' target="_blank"' if ext in _blank else ''
 
-    if os.path.isdir(abs_path):
-        rel_path = path
+    if isdir:
         abs_dire = abs_path
         nbv_text = os.path.basename(abs_path)
     else:
@@ -102,7 +102,7 @@ def link(path, caption=None, color=None):
         nbv_text = path
     rel_dire = os.path.join('/ta', os.path.relpath(abs_dire, '/office-space/TA'))
 
-    if ext == '.ipynb':
+    if ext == '.ipynb' or isdir:
         rel_path = path
 
     link_nbv = '<a href="{}" title="link to the file"{}>{}</a>'.format(rel_path, blank, nbv_text)
