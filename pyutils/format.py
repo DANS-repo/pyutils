@@ -127,14 +127,15 @@ def link(path, caption=None, color=None):
     return path
 
 
-def toggle_code_cells():
+def toggle_code_cells(initial_show=True):
     """
     Displays a floating button to toggle the visibility of code cells.
     :return: None
     """
-    display(HTML("""
+    show = 'false' if initial_show else 'true'
+    tags = """
     <script>
-        code_show=false; 
+        code_show={}; 
         function code_toggle() {
          if (code_show){
              $("div.input").hide();
@@ -163,4 +164,5 @@ def toggle_code_cells():
         <input class="toggle-button" type="submit" value="Toggle code cells">
     </form>
     </div>
-    """))
+    """.format(show)
+    display(HTML(tags))
