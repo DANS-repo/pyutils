@@ -133,9 +133,8 @@ def toggle_code_cells(initial_show=True):
     :return: None
     """
     show = 'false' if initial_show else 'true'
-    tags = """
-    <script>
-        code_show={}; 
+    start = '<script>code_show={};'.format(show)
+    tags = start + """
         function code_toggle() {
          if (code_show){
              $("div.input").hide();
@@ -164,5 +163,5 @@ def toggle_code_cells(initial_show=True):
         <input class="toggle-button" type="submit" value="Toggle code cells">
     </form>
     </div>
-    """.format(show)
+    """
     display(HTML(tags))
