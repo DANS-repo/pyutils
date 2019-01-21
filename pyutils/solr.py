@@ -39,4 +39,5 @@ def search_all(query):
             print('\r', start, end='', flush=True)
         df2 = search(query, start, rows)
         df = pd.concat([df, df2])
+    print('\r', start + len(df2), 'results', end='', flush=True)
     return df
