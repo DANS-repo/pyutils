@@ -51,13 +51,18 @@ def link_fedora_ds_license(sid):
         .format(sid, sid)
 
 
-def link(path, caption=None, color=None):
+import os
+from IPython.core.display import HTML
+
+
+def link(path, caption=None, color=None, extra=None):
     """
     Display relative links to the file in 'path'.
 
     :param path: the path to link
     :param caption: caption for links, default None
     :param color: color for caption and border, default None
+    :param extra: extra text to be inserted before the caption, default None
     :return: parameter path for chaining
     """
     _blank = ['.html', '.txt', '.json', '.csv']
@@ -90,6 +95,9 @@ def link(path, caption=None, color=None):
     if color is None:
         color = 'grey'
         color = _ccoll.get(ext, color)
+
+    if extra is not None:
+        caption = extra + ' ' + caption
 
     blank = ' target="_blank"' if ext in _blank else ''
 
