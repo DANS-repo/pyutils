@@ -9,3 +9,7 @@ class TestFormat(unittest.TestCase):
 
     def test_link_directory(self):
         fm.link('../../2018/twister/data/')
+
+    def test_messages(self):
+        fm.messages()
+

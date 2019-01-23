@@ -173,3 +173,24 @@ def toggle_code_cells(initial_show=True):
     </div>
     """
     display(HTML(tags))
+
+
+def messages():
+    script = """
+    <div id="omni_present_message">
+    </div>
+    <script>
+    function loadOmniPresentMessage() {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          document.getElementById("omni_present_message").innerHTML = this.responseText;
+        }
+      };
+      xhttp.open("GET", "/ta/tech/msg/omni_present_message.txt", true);
+      xhttp.send();
+    }
+    $( document ).ready(loadOmniPresentMessage);
+    </script>
+    """
+    display(HTML(script))
