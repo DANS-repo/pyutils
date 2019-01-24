@@ -176,6 +176,11 @@ def toggle_code_cells(initial_show=True):
 
 
 def messages():
+    """
+    Inserts a script that does a callback (on document ready) and displays
+    the content of the url /ta/tech/msg/omni_present_message.txt
+    :return: None
+    """
     script = """
     <div id="omni_present_message">
     </div>
@@ -185,6 +190,8 @@ def messages():
       xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
           document.getElementById("omni_present_message").innerHTML = this.responseText;
+        } else {
+          document.getElementById("omni_present_message").hide();
         }
       };
       xhttp.open("GET", "/ta/tech/msg/omni_present_message.txt", true);
