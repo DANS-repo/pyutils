@@ -3,6 +3,7 @@
 
 import csv
 import os
+import datetime
 from IPython.core.display import HTML
 from IPython.display import display
 
@@ -51,8 +52,31 @@ def link_fedora_ds_license(sid):
         .format(sid, sid)
 
 
-import os
-from IPython.core.display import HTML
+def format_size(size_in_bytes, leading=8, trailing=1):
+    """
+    Formats the given integer as an appropriate string with leading spaces.
+    :param size_in_bytes:
+    :return:
+    """
+    if size_in_bytes <= 1024:
+        trailing = 0
+    f = '{:' + str(leading) + '.' + str(trailing) + 'f}'
+    if size_in_bytes >= 1024 * 1024 * 1024:
+        return (f + ' GB').format(size_in_bytes / 1024 / 1024 / 1024)
+    elif size_in_bytes >= 1024 * 1024:
+        return (f + ' MB').format(size_in_bytes / 1024 / 1024)
+    elif size_in_bytes >= 1024:
+        return (f + ' KB').format(size_in_bytes / 1024)
+    else:
+        return (f + ' B').format(size_in_bytes)
+
+
+def format_datetime(date):
+    return '{0:%Y-%m-%d %H:%M:%S}'.format(date)
+
+
+def format_timestamp(timestamp):
+    return format_datetime(datetime.datetime.fromtimestamp(timestamp))
 
 
 def link(path, caption=None, color=None, extra=None):
@@ -84,6 +108,7 @@ def link(path, caption=None, color=None, extra=None):
     ext = os.path.splitext(abs_path)[1]
     isdir = ext == ''
     filename = os.path.basename(abs_path)
+    stats = os.stat(abs_path)
 
     if caption is None:
         if isdir:
@@ -92,6 +117,9 @@ def link(path, caption=None, color=None, extra=None):
             caption = 'bestand'
         caption = _ctext.get(ext, caption)
         caption += ': ' + filename
+        if not isdir:
+            caption += format_size(stats.st_size)
+
     if color is None:
         color = 'grey'
         color = _ccoll.get(ext, color)
@@ -181,23 +209,23 @@ def messages():
     the content of the url /ta/tech/msg/omni_present_message.txt
     :return: None
     """
-    script = """
-    <div id="omni_present_message">
-    </div>
-    <script>
-    function loadOmniPresentMessage() {
-      var xhttp = new XMLHttpRequest();
-      xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-          document.getElementById("omni_present_message").innerHTML = this.responseText;
-        } else {
-          document.getElementById("omni_present_message").hide();
-        }
-      };
-      xhttp.open("GET", "/ta/tech/msg/omni_present_message.txt", true);
-      xhttp.send();
-    }
-    $( document ).ready(loadOmniPresentMessage);
-    </script>
-    """
+    script = ('\n'
+              '    <div id="omni_present_message">\n'
+              '    </div>\n'
+              '    <script>\n'
+              '    function loadOmniPresentMessage() {\n'
+              '      var xhttp = new XMLHttpRequest();\n'
+              '      xhttp.onreadystatechange = function() {\n'
+              '        if (this.readyState == 4 && this.status == 200) {\n'
+              '          document.getElementById("omni_present_message").innerHTML = this.responseText;\n'
+              '        } else {\n'
+              '          document.getElementById("omni_present_message").hide();\n'
+              '        }\n'
+              '      };\n'
+              '      xhttp.open("GET", "/ta/tech/msg/omni_present_message.txt", true);\n'
+              '      xhttp.send();\n'
+              '    }\n'
+              '    $( document ).ready(loadOmniPresentMessage);\n'
+              '    </script>\n'
+              '    ')
     display(HTML(script))
