@@ -108,8 +108,11 @@ def link(path, caption=None, color=None, extra=None):
     ext = os.path.splitext(abs_path)[1]
     isdir = ext == ''
     filename = os.path.basename(abs_path)
-    stats = os.stat(abs_path)
-    file_size = format_size(stats.st_size)
+    if os.path.exists(abs_path) and not isdir:
+        stats = os.stat(abs_path)
+        file_size = format_size(stats.st_size)
+    else:
+        file_size = ''
 
     if caption is None:
         if isdir:
