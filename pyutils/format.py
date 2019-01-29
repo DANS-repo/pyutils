@@ -109,6 +109,7 @@ def link(path, caption=None, color=None, extra=None):
     isdir = ext == ''
     filename = os.path.basename(abs_path)
     stats = os.stat(abs_path)
+    file_size = format_size(stats.st_size)
 
     if caption is None:
         if isdir:
@@ -117,8 +118,6 @@ def link(path, caption=None, color=None, extra=None):
             caption = 'bestand'
         caption = _ctext.get(ext, caption)
         caption += ': ' + filename
-        if not isdir:
-            caption += format_size(stats.st_size)
 
     if color is None:
         color = 'grey'
@@ -149,8 +148,8 @@ def link(path, caption=None, color=None, extra=None):
 
     capt = '<caption style="text-align: left"><h3 style="color: {};">{}&nbsp;{}</h3></caption>' \
         .format(color, link_jup, caption)
-    row1 = '<tr><td style="text-align: left">{}</td><td style="text-align: left">{}</td><td>  </td></tr>' \
-        .format(nbv, link_nbv)
+    row1 = '<tr><td style="text-align: left">{}</td><td style="text-align: left">{}</td><td>{}</td></tr>' \
+        .format(nbv, link_nbv, file_size)
     row2 = '<tr><td style="text-align: left">{}</td><td style="text-align: left">{}</td><td>  </td></tr>' \
         .format(dsv, link_dir)
     row3 = '<tr><td style="text-align: left">{}</td><td style="text-align: left">{}</td><td>  </td></tr>' \
