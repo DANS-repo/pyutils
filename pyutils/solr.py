@@ -38,6 +38,6 @@ def search_all(query):
         if start % 5000 == 0:
             print('\r', start, end='', flush=True)
         df2 = search(query, start, rows)
-        df = pd.concat([df, df2])
+        df = pd.concat([df, df2], ignore_index=True)
     print('\r', start + len(df2), 'results', end='', flush=True)
     return df
