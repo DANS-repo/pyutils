@@ -13,7 +13,8 @@ from IPython.core.display import HTML
 from IPython.display import display
 
 _log = logging.getLogger(__name__)
-__LOG_CHANNEL__ = logging.StreamHandler(sys.stdout)
+__STDOUT_LOG_CHANNEL__ = None
+__FILE_LOG_CHANNEL__ = None
 
 
 def start_logging(level=logging.DEBUG):
@@ -22,12 +23,15 @@ def start_logging(level=logging.DEBUG):
     :param level: log level
     :return: None
     """
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s')
-    __LOG_CHANNEL__.setFormatter(formatter)
-    __LOG_CHANNEL__.setLevel(level)
-    root = logging.getLogger()
-    root.setLevel(logging.DEBUG)
-    root.addHandler(__LOG_CHANNEL__)
+    global __STDOUT_LOG_CHANNEL__
+    if __STDOUT_LOG_CHANNEL__ is None:
+        __STDOUT_LOG_CHANNEL__ = logging.StreamHandler(sys.stdout)
+        formatter = logging.Formatter('%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s')
+        __STDOUT_LOG_CHANNEL__.setFormatter(formatter)
+        __STDOUT_LOG_CHANNEL__.setLevel(level)
+        root = logging.getLogger()
+        root.setLevel(logging.DEBUG)
+        root.addHandler(__STDOUT_LOG_CHANNEL__)
 
 
 def end_logging():
@@ -35,8 +39,11 @@ def end_logging():
     Stop logging log messages to stdout.
     :return: None
     """
-    root = logging.getLogger()
-    root.removeHandler(__LOG_CHANNEL__)
+    global __STDOUT_LOG_CHANNEL__
+    if __STDOUT_LOG_CHANNEL__ is not None:
+        root = logging.getLogger()
+        root.removeHandler(__STDOUT_LOG_CHANNEL__)
+        __STDOUT_LOG_CHANNEL__ = None
 
 
 def debug(func, *args, **kwargs):
@@ -72,7 +79,7 @@ def info(func, *args, **kwargs):
 
 
 class CsvFormatter(logging.Formatter):
-    
+
     def __init__(self):
         super().__init__()
         self.output = StringIO()
@@ -88,7 +95,7 @@ class CsvFormatter(logging.Formatter):
         return data.strip()
 
 
-def initiate_file_logging(log_file='logs/pyu.log', level=logging.DEBUG, max_bytes=1000 * 1000 * 1024,
+def start_file_logging(log_file='logs/pyu.log', level=logging.DEBUG, max_bytes=1000 * 1000 * 1024,
                           backup_count=3, encoding='utf-8'):
     """
     Initiate logging to a rotating file. If needed, the log file output can be picked up in a DataFrame:
@@ -105,15 +112,35 @@ def initiate_file_logging(log_file='logs/pyu.log', level=logging.DEBUG, max_byte
     :param encoding: encoding of the file
     :return: None
     """
-    path = os.path.dirname(log_file)
-    os.makedirs(path, exist_ok=True)
-    log_channel = RotatingFileHandler(log_file, maxBytes=max_bytes, backupCount=backup_count, encoding=encoding)
-    log_channel.setFormatter(CsvFormatter())
-    log_channel.setLevel(level)
-    root = logging.getLogger()
-    root.setLevel(logging.DEBUG)
-    root.addHandler(log_channel)
-    _log.debug('Initiated file logging to {}'.format(log_file))
+    global __FILE_LOG_CHANNEL__
+    if __FILE_LOG_CHANNEL__ is None:
+        path = os.path.dirname(log_file)
+        os.makedirs(path, exist_ok=True)
+        __FILE_LOG_CHANNEL__ = RotatingFileHandler(log_file, maxBytes=max_bytes, backupCount=backup_count,
+                                                   encoding=encoding)
+        __FILE_LOG_CHANNEL__.setFormatter(CsvFormatter())
+        __FILE_LOG_CHANNEL__.setLevel(level)
+        root = logging.getLogger()
+        root.setLevel(logging.DEBUG)
+        root.addHandler(__FILE_LOG_CHANNEL__)
+        _log.debug('Started file logging to {}'.format(__FILE_LOG_CHANNEL__.baseFilename))
+    else:
+        _log.warning('Not initiating file logging. Logging to file already established: {}'
+                     .format(__FILE_LOG_CHANNEL__.baseFilename))
+
+
+def end_file_logging():
+    """
+    End logging to a rotating file that was started with `initiate_file_logging`.
+
+    :return: None
+    """
+    global __FILE_LOG_CHANNEL__
+    if __FILE_LOG_CHANNEL__ is not None:
+        _log.info('End file logging to {}'.format(__FILE_LOG_CHANNEL__.baseFilename))
+        root = logging.getLogger()
+        root.removeHandler(__FILE_LOG_CHANNEL__)
+        __FILE_LOG_CHANNEL__ = None
 
 
 class RFC4180(object):
