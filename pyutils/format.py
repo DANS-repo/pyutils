@@ -2,10 +2,118 @@
 # -*- coding: utf-8 -*-
 
 import csv
+import logging
 import os
 import datetime
+import sys
+from io import StringIO
+from logging.handlers import RotatingFileHandler
+
 from IPython.core.display import HTML
 from IPython.display import display
+
+_log = logging.getLogger(__name__)
+__LOG_CHANNEL__ = logging.StreamHandler(sys.stdout)
+
+
+def start_logging(level=logging.DEBUG):
+    """
+    Start logging log messages to stdout.
+    :param level: log level
+    :return: None
+    """
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s')
+    __LOG_CHANNEL__.setFormatter(formatter)
+    __LOG_CHANNEL__.setLevel(level)
+    root = logging.getLogger()
+    root.setLevel(logging.DEBUG)
+    root.addHandler(__LOG_CHANNEL__)
+
+
+def end_logging():
+    """
+    Stop logging log messages to stdout.
+    :return: None
+    """
+    root = logging.getLogger()
+    root.removeHandler(__LOG_CHANNEL__)
+
+
+def debug(func, *args, **kwargs):
+    """
+    Wrapper for functions that want to be logged to stdout. After the function returns, logging is turned of again.
+    :param func: the function to call
+    :param args: arguments for the function
+    :param kwargs: named arguments for the function
+    :return: the return value of the function
+    """
+    start_logging(logging.DEBUG)
+    try:
+        ret_val = func(*args, **kwargs)
+    finally:
+        end_logging()
+    return ret_val
+
+
+def info(func, *args, **kwargs):
+    """
+    Wrapper for functions that want to be logged to stdout. After the function returns, logging is turned of again.
+    :param func: the function to call
+    :param args: arguments for the function
+    :param kwargs: named arguments for the function
+    :return: the return value of the function
+    """
+    start_logging(logging.INFO)
+    try:
+        ret_val = func(*args, **kwargs)
+    finally:
+        end_logging()
+    return ret_val
+
+
+class CsvFormatter(logging.Formatter):
+    
+    def __init__(self):
+        super().__init__()
+        self.output = StringIO()
+        self.writer = csv.writer(self.output, quoting=csv.QUOTE_ALL)
+
+    def format(self, record):
+        time = datetime.datetime.fromtimestamp(record.created).strftime('%Y-%m-%d %H:%M:%S.%f')
+        self.writer.writerow([time, record.threadName, record.process, record.levelname, record.filename,
+                              record.lineno, record.funcName, record.msg, record.pathname])
+        data = self.output.getvalue()
+        self.output.truncate(0)
+        self.output.seek(0)
+        return data.strip()
+
+
+def initiate_file_logging(log_file='logs/pyu.log', level=logging.DEBUG, max_bytes=1000 * 1000 * 1024,
+                          backup_count=3, encoding='utf-8'):
+    """
+    Initiate logging to a rotating file. If needed, the log file output can be picked up in a DataFrame:
+    ```
+    names = ['date', 'thread', 'process', 'level', 'file', 'line', 'function', 'msg', 'path']
+    df = pd.read_csv('logs/pyu.log', header=None, quoting=1, converters={0: pd.to_datetime}, names=names)
+    ```
+
+    :param log_file: the path or file to write to. Directories will be created.
+    :param level: the log level. one of logging levels
+                logging.DEBUG (10), logging.INFO (20), logging.WARNING (30), logging.ERROR (40), logging.CRITICAL (50)
+    :param max_bytes: max bytes for roll over
+    :param backup_count: how many files are kept
+    :param encoding: encoding of the file
+    :return: None
+    """
+    path = os.path.dirname(log_file)
+    os.makedirs(path, exist_ok=True)
+    log_channel = RotatingFileHandler(log_file, maxBytes=max_bytes, backupCount=backup_count, encoding=encoding)
+    log_channel.setFormatter(CsvFormatter())
+    log_channel.setLevel(level)
+    root = logging.getLogger()
+    root.setLevel(logging.DEBUG)
+    root.addHandler(log_channel)
+    _log.debug('Initiated file logging to {}'.format(log_file))
 
 
 class RFC4180(object):
