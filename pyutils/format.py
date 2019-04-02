@@ -165,8 +165,18 @@ def link_easy(sid):
     return '<a target="_blank" href="{}{}">{}</a>'.format(prefix, sid, sid)
 
 
+def excel_link_easy(sid):
+    formula = '=HYPERLINK("hhttps://easy.dans.knaw.nl/ui/datasets/id/{}", "{}")'.format(sid, sid)
+    return formula
+
+
 def link_doi(doi):
     return '<a target="_blank" href="https://doi.org/{}">{}</a>'.format(doi, doi)
+
+
+def excel_link_doi(doi):
+    formula = '=HYPERLINK("https://doi.org/{}", "{}")'.format(doi, doi)
+    return formula
 
 
 def link_fedora_file(sid):
@@ -181,6 +191,12 @@ def link_fedora_file(sid):
         .format(sid, sid)
 
 
+def excel_fedora_file(sid):
+    formula = '=HYPERLINK("http://easy01.dans.knaw.nl:8080/fedora/objects/{}/datastreams/EASY_FILE/content", "{}")'.format(
+        sid, sid)
+    return formula
+
+
 def link_fedora_file_md(sid):
     """
     Creates a html link tag to the EASY_FILE_METADATA of a file with the given sid.
@@ -192,6 +208,11 @@ def link_fedora_file_md(sid):
     """
     return '<a href="http://easy01.dans.knaw.nl:8080/fedora/objects/{}/datastreams/EASY_FILE_METADATA/content" target="_blank">{}</a>'\
         .format(sid, sid)
+
+
+def excel_fedora_file_md(sid):
+    formula = '=HYPERLINK("http://easy01.dans.knaw.nl:8080/fedora/objects/{}/datastreams/EASY_FILE_METADATA/content", "{}")'.format(sid, sid)
+    return formula
 
 
 def link_fedora_ds_license(sid):
