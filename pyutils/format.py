@@ -166,7 +166,7 @@ def link_easy(sid):
 
 
 def excel_link_easy(sid):
-    formula = '=HYPERLINK("hhttps://easy.dans.knaw.nl/ui/datasets/id/{}", "{}")'.format(sid, sid)
+    formula = '=HYPERLINK("https://easy.dans.knaw.nl/ui/datasets/id/{}", "{}")'.format(sid, sid)
     return formula
 
 
