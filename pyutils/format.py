@@ -123,9 +123,9 @@ def start_file_logging(log_file='logs/pyu.log', level=logging.DEBUG, max_bytes=1
         root = logging.getLogger()
         root.setLevel(logging.DEBUG)
         root.addHandler(__FILE_LOG_CHANNEL__)
-        _log.debug('Started file logging to {}'.format(__FILE_LOG_CHANNEL__.baseFilename))
+        _log.info('Started file logging to {}'.format(__FILE_LOG_CHANNEL__.baseFilename))
     else:
-        _log.warning('Not initiating file logging. Logging to file already established: {}'
+        _log.info('Not initiating file logging. Logging to file already established: {}'
                      .format(__FILE_LOG_CHANNEL__.baseFilename))
 
 
@@ -178,6 +178,19 @@ def link_fedora_file(sid):
     :return: link to the file content
     """
     return '<a href="http://easy01.dans.knaw.nl:8080/fedora/objects/{}/datastreams/EASY_FILE/content" target="_blank">{}</a>'\
+        .format(sid, sid)
+
+
+def link_fedora_file_md(sid):
+    """
+    Creates a html link tag to the EASY_FILE_METADATA of a file with the given sid.
+
+    http://easy01.dans.knaw.nl:8080/fedora/objects/easy-file:6364865/datastreams/EASY_FILE_METADATA/content
+
+    :param sid:  a file id
+    :return: link to the file metadata
+    """
+    return '<a href="http://easy01.dans.knaw.nl:8080/fedora/objects/{}/datastreams/EASY_FILE_METADATA/content" target="_blank">{}</a>'\
         .format(sid, sid)
 
 
